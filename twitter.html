@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kitter</title>
+    <script type = "module">
+
+        import { API } from "./api/app.js";
+        import { activate_keyboard_shortcuts } from "./js/keyboard.js";
+
+        window.addEventListener('DOMContentLoaded', event => {
+
+            window.API = new API();
+
+            activate_keyboard_shortcuts();
+
+            let overlay = document.querySelector("#o");
+            let overlax = document.querySelector("#x");
+            let message = document.querySelector("#m");
+            let messagf = document.querySelector("#n");
+
+            document.querySelector("#stripe").addEventListener("click", E => {
+                // animate airplane
+                let airplane = document.querySelector("#airplane");
+                airplane.style.animationName = "flown";
+                overlay.style.display = "flex";
+                message.innerHTML = window.API.ui.message.post;
+                setTimeout(E => {
+                    airplane.style.animationName = null;
+                }, 800);
+            });
+
+            let resize = event => {
+                let avatar = document.querySelector("#avatar");
+                let bar = document.querySelector("#head section:nth-child(1)");
+                let head = document.querySelector("#head");
+                let follow = document.querySelector("#follow");
+                let breaker = document.querySelector("#breaker");
+                if (event.target.innerWidth < 666) {
+                    let diff = (1.0 - parseInt(666 - event.target.innerWidth) / 1000);
+                    avatar.style.transform = `scale(${diff})`;
+                    avatar.style.left = -50 + parseInt(diff * 50) + "px";
+                    bar.style.height = 87 - (parseInt(event.target.innerWidth) / -5) + "px";
+                    breaker.style.display = 'block';
+                } else {
+                    breaker.style.display = 'none';
+                }
+            };
+
+            window.onresize = event => resize(event);
+
+        });
+    </script>
+    <style>
+
+        /* overlay */
+        i#o, i#x { z-index: 1000;
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4); }
+        i#o { z-index: 1 }
+        i#x { z-index: 2 }
+        /* message */
+        i#m, i#n { border-radius: 8px; }
+        i#m, i#n { width: 500px; height: 300px; background: white; }
+        #o #header, #x #header { height: 48px; border-bottom: 1px solid silver; }
+        #o #footer, #o #header { height: 48px; border-top: 1px solid silver; }
+        #close { cursor: pointer; width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; }
+        #close span { font-size: 40px; transform: rotate(45deg); font-family: Tahoma; }
+        #letter { border: 0; margin-left: 80px; font-size: 20px; padding: 10px; width: 400px; height: 100px }
+
+        *:focus {
+            outline: none;
+        }
+
+        * { position: relative }
+        * { font-family: arial }
+
+        body { margin: 0 }
+
+        div#opt { display: block; margin: 0; padding-left: 75px; height: 64px; line-height: 64px; }
+        div#opt div.icon { position: absolute; top: 0; left: 0; width: 64px; height: 64px; display: flex; }
+
+        #logo { background: url('https://www.semicolon.dev/static/kitter.png'); }
+        #home { background: url('https://www.semicolon.dev/static/icon1.png'); }
+        #explore { background: url('https://www.semicolon.dev/static/icon2.png'); }
+        #notifications { background: url('https://www.semicolon.dev/static/icon3.png'); }
+        #mail { background: url('https://www.semicolon.dev/static/icon4.png'); }
+        #bookmarks { background: url('https://www.semicolon.dev/static/icon5.png'); }
+        #lists { background: url('https://www.semicolon.dev/static/icon6.png'); }
+        #profile { background: url('https://www.semicolon.dev/static/icon7.png'); }
+        #more { background: url('https://www.semicolon.dev/static/icon8.png'); }
+        #post {  }
+
+        main { display: flex }
+        article { display: flex }
+
+        #grid {
+            display: grid;
+            width: 1240px;
+            grid-template-columns: 260px 600px 400px;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+        }
+
+        #A { max-width: 260px }
+        #B { max-width: 600px;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+        #C { }
+
+        #D { max-width: 260px }
+        #E { max-width: 600px }
+        #F { max-width: 400px }
+
+        main { flex-direction: row }
+        main article { flex-direction: column }
+
+        #head { height: 450px; border-bottom: 1px solid #eee; }
+
+        #profile {
+            position: absolute;
+            top: 64px;
+            width: 100%;
+        }
+
+        /* profile header image */
+        #head section:nth-child(1) {
+            position: absolute;
+            width: unset;
+            height: 220px;
+            background: #ddd;
+            width: 100%;
+            border-top: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        /* profile header info */
+        #head section:nth-child(2) {
+            padding: 10px;
+            padding-top: 40px;
+            position: absolute;
+            top: 220px;
+            left: 0;
+            height: 60px;
+            width: 97%;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        #head div { padding: 3px; }
+
+        #avatar {
+            position: relative;
+            margin: 32px;
+            margin-top: 100px;
+            margin-left: 16px;
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 0 15px #ddd;
+        }
+
+        #avatar img {
+            position: relative;
+            border-radius: 8px;
+            width: 140px;
+            height: 140px;
+        }
+
+        #back { width: 70px; height: 58px; text-align: center; position: absolute; top: 0; left: 0; }
+        #back a { text-decoration: none; font-size: 35px; text-align: center; line-height: 48px; }
+
+        h3 { position: absolute; top: 8px; left: 70px; margin: 0; padding: 0; }
+        p { position: absolute; top: 32px; left: 70px; margin: 0; padding: 0; font-size: 14px; color: #777; }
+
+        nav { display: flex; flex-direction: row; border-bottom: 1px ddd; }
+        nav section { background: transparent; width: 25%; text-align: center; line-height: 40px; height: 40px; }
+
+        #search { height: 60px; }
+        #search input {
+            width: 300px;
+            background: #ededed url('https://www.semicolon.dev/static/magnify.png') 8px 6px no-repeat;
+            font-size: 18px; border: 0; margin: 5px;
+            padding: 10px; padding-left: 50px;
+            border-radius: 32px;
+            margin-left: 24px;
+        }
+
+        #images { padding-left: 20px; display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+        #images section { display: block; background: #eee; margin: 3px; width: 30%; height: 80px; text-align: center; line-height: 80px; color: #777; }
+        #images section:nth-child(1) { border-top-left-radius: 10px; }
+        #images section:nth-child(3) { border-top-right-radius: 10px; }
+        #images section:nth-child(4) { border-bottom-left-radius: 10px; }
+        #images section:nth-child(6) { border-bottom-right-radius: 10px; }
+
+        .icon { cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* .icon:hover { background: #eee; }
+        .icon div { align-self: center; width: 20px; height: 20px; border-radius: 16px; background: black; border-radius: 16px; } */
+        #stripe { overflow: hidden; background: black;
+            border-radius: 64px; cursor: pointer; position: absolute;
+            top: 0; left:5px; width: 55px; height: 55px; color: white; text-align: center; border-radius: 55px; line-height: 55px; }
+        #airplane {
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            background: url('https://www.semicolon.dev/static/feather2.png') 8px 8px no-repeat;
+            animation-duration: 0.5s;
+            animation-direction: normal;
+            top: -75px;
+            left: -75px;
+        }
+        @keyframes flown {
+            from { top: -75px; left: -75px }
+            to { top: -107px; left: -11px }
+        }
+
+        #followbar { position: absolute; top: 16px; right: 0px; }
+        #follow { width: 100px; height: 25px; border-radius: 16px; z-index: 2;
+            font-size: 20px; cursor: pointer; position: absolute; bottom: -48px; right: 16px;
+            border: 1px solid #ddd; text-align: center; line-height: 25px; }
+        #mute { width: 25px; height: 25px; border-radius: 16px; z-index: 2;
+            font-size: 20px; cursor: pointer; position: absolute; bottom: -48px; right: 132px;
+            border: 1px solid #ddd; text-align: center; line-height: 15px; }
+        #follow:hover { background: #e4f7ff; color: #333; }
+
+        /* trends bar */
+
+        #mightlike { width: 200px; margin-left: 24px; }
+        #trends { width: 200px; margin-left: 24px; }
+        .top { font-weight: bold; padding: 10px; margin-top: 10px; background: #eee; border-top-left-radius: 10px; border-top-right-radius: 10px; }
+        .mid { }
+        .story { padding: 10px; margin-top: 5px; background: #eee;}
+        .bot { padding: 10px; background: #eee; margin-top: 5px; }
+        .bot { padding: 10px; background: #eee; margin-top: 5px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+
+        #stripe { width: 150px; height: 45px; line-height: 45px; }
+        #stripe .post { visibility: visible;  }
+        #airplane { visibility: hidden; }
+
+        #opt { cursor: pointer; }
+        #opt:hover { background: #e4f7ff; border-radius: 100px; width: 130px; }
+        #opt:hover .icon { opacity: 0.75 }
+
+        #opt.nx:hover { background: transparent; }
+
+        /* resizers */
+        @media screen and (max-width: 1290px) {
+            #grid { width: unset; display: grid; grid-template-columns: 85px 600px 400px } /* change grid template */
+            #A { width: 64px; } /* resize navigation column */
+            div#opt { padding-left: unset;  } /* shorten navigation items */
+            div#opt span { display: none }
+            div.icon { width: 64px; display: none }  /* hide navigation text*/
+            #search input { width: 295px }
+            #stripe { width: 55px; height: 55px; }
+            #airplane { visibility: visible; }
+            #stripe .post { visibility: hidden; }
+            #opt:hover { width: 64px; }
+        }
+
+        @media screen and (max-width: 1100px) {
+            #grid { width: unset; display: grid; grid-template-columns: 85px 600px 300px } /* change grid template */
+            #C { width: 300px }
+            #search input { width: 205px; }
+        }
+
+        @media screen and (max-width: 1000px) {
+            #grid { width: unset; display: grid; grid-template-columns: 85px 600px 250px } /* change grid template */
+            #C { width: 300px }
+            #search input { width: 105px }
+        }
+
+        @media screen and (max-width: 1000px) {
+            #grid { width: unset; display: grid; grid-template-columns: 85px 600px } /* change grid template */
+            #C { display: none; }
+        }
+
+        @media screen and (max-width: 710px) {
+            #A { margin-left: 4px }
+            #grid { width: 100%; display: grid; grid-template-columns: 75px 1fr } /* change grid template */
+        }
+
+
+    </style>
+</head>
+<body>
+<main id = "grid">
+    <article id = "A">
+        <div id = "opt" class = "nx"><div class = "icon" id = "logo"><div></div></div></div>
+        <div id = "opt"><div class = "icon" id = "home"><div></div></div><span>Home</span></div>
+        <div id = "opt"><div class = "icon" id = "explore"><div></div></div> <span>Explore</span></div>
+        <div id = "opt"><div class = "icon" id = "notifications"><div></div></div> <span>Notifications</span></div>
+        <div id = "opt"><div class = "icon" id = "mail"><div></div></div> <span>Messages</span></div>
+        <div id = "opt"><div class = "icon" id = "bookmarks"><div></div></div> <span>Bookmarks</span></div>
+        <div id = "opt"><div class = "icon" id = "lists"><div></div></div> <span>Lists</span></div>
+        <div id = "opt"><div class = "icon" id = "profile"><div></div></div> <span>Profile</span></div>
+        <div id = "opt"><div class = "icon" id = "more"><div></div></div> <span>More</span></div>
+        <div id = "opt" class = "nx"><div class = "icon" id = "post" style = 'margin-top: 5px;'>
+            <div class = "no-select" id = "stripe">
+                <div id = "airplane"></div>
+                <span class = "post">Post</span>
+            </div>
+        </div> <span></span></div>
+    </article>
+    <article id = "B">
+        <section id = "head">
+            <div id = "back"><a href = "#" onclick = "return null">↫</a></div>
+            <h3>Your Username</h3>
+            <p>52.3K Tweets</p>
+            <section id = "profile">
+                <section>
+                    <div id = "mute">...</div>
+                    <div id = "follow">Follow</div>
+                    <div id = "avatar">
+                        <img src = "https://pbs.twimg.com/profile_images/1247962451779321856/KYuAWBa0_400x400.jpg"/>
+                    </div>
+                </section>
+                <section>
+                    <div id = "followbar"></div>
+                    <div style = "font-size: 18px; font-weight: bold; width: 60%">Your Username</div>
+                    <div style = "width: 60%">@your_username</div>
+                    <div style = "width: 100%; padding-left: 4px; margin-top: 4px;">[ ] United States [ ] link [ ]<div id = "breaker"></div>Joined April 2020</div>
+                    <div style = "width: 60%;display: flex; flex-direction: row; justify-content: start;">
+                        <div><b>1,138</b> Following</div>
+                        <div><b>72.5K</b> Followers</div>
+                    </div>
+                </section>
+            </section>
+        </section>
+        <section>
+            <nav>
+                <section style = "border-bottom: 2px solid brown">Tweets</section>
+                <section>Replies</section>
+                <section>Media</section>
+                <section>Likes</section>
+            </nav>
+        </section>
+    </article>
+    <article id = "C">
+        <div id = "search"><input type = "text" placeholder = "Search Twitter" /></div>
+        <div id = "images">
+            <section>a</section>
+            <section>2</section>
+            <section>f</section>
+            <section>g</section>
+            <section>h</section>
+            <section>j</section>
+        </div>
+        <style>
+
+        </style>
+        <div id = "mightlike">
+            <div class = "top">You might like</div>
+            <div class = "mid">
+                <div class = "story">blah</div>
+                <div class = "story">blah</div>
+                <div class = "story">blah</div>
+            </div>
+            <div class = "bot"><span>Show More</span></div>
+        </div>
+        <div id = "trends">
+            <div class = "top">Trends for you <span>[ ]</span></div>
+            <div class = "mid">
+                <div class = "story">blah</div>
+                <div class = "story">blah</div>
+                <div class = "story">blah</div>
+            </div>
+            <div class = "bot"><span>Show More</span></div>
+        </div>
+    </article>
+</main>
+<main id = "flex">
+    <article id = "D"></article>
+    <article id = "E"></article>
+    <article id = "F"></article>
+</main>
+<i id = "o" style = 'z-index: 10000'><i id = "m"></i></i>
+<i id = "x"><i id = "n"></i></i>
+</body>
+</html>
