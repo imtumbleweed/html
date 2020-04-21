@@ -1,0 +1,554 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Twitter Layout with CSS grid and flex</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="https://www.semicolon.dev/static/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://www.semicolon.dev/static/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://www.semicolon.dev/static/favicon-16x16.png">
+        <meta http-equiv = "Content-Type" content="text/html;charset=utf-8" />
+        <meta http-equiv = "content-language" content="en-US" />
+        <meta name = "google-site-verification" content="9ypE6-6kAA1FSmD-Y47heO48vwtUoqq5BhE5QiCezTk" />
+        <link rel = "icon" href = "https://www.semicolon.dev/static/favicon.png" />5
+        <meta name = "viewport"   content = "width=550"/>
+        <meta name = "description" content = "Semicolon."/>
+        <meta name = "keywords"      content = "semicolon"/>
+        <meta name = "author"         content = "--"/>
+        <meta name = "subject"         content = "Semicolon"/>
+        <meta name = "copyright"        content = "---"/>
+        <meta name = "web_author"       content = "---">
+        <meta name = "robots"             content = "index, follow"/>
+        <meta name = "abstract"           content = "css"/>
+        <meta name = "revisit-after"       content = "3 days"/>
+        <meta name = "contact"            content = "---" />
+        <meta name = "distribution"       content = "global" />
+        <meta name = "news_keywords"     content = "semicolon" />
+        <meta name = "rating"            content = "general" />
+        <meta name = "verify-v1"         content = "---" />
+        <meta property = "og:title"          content = "Semicolon"/>
+        <meta property = "og:type"           content = "article"/>
+        <meta property = "og:url"            content = "https://www.semicolon.dev"/>
+        <meta property = "og:site_name"      content = "Semicolon"/>
+        <meta property = "og:image"          content = "https://www.semicolon.dev/static/semicolon.png" />
+        <meta name = "language"            content = "English">
+        <meta name = "twitter:card"        content = "summary_large_image" />
+        <!--<meta name = "twitter:site"    content = "@semicolon" />-->
+        <meta name = "twitter:creator"     content = "@js_tut" />
+        <meta name = "twitter:title"       content = "Twitter layout" />
+        <meta name = "twitter:description" content = "Twitter layout." />
+        <meta name = "twitter:image"       content = "https://semicolon.dev/static/semicolon.png" />
+        <!-- Light Mode is the default persistent theme -->
+        <link rel = "stylesheet" title = "Default Style" href = "https://www.semicolon.dev/static/default.css" />
+        <!-- Dark Mode Alternate Style Sheet -->
+        <link property = "stylesheet" title = "light"
+              rel = "alternate stylesheet" type = "text/css" href = 'https://www.semicolon.dev/static/light.css' />
+        <link property = "stylesheet" title = "dark"
+              rel = "alternate stylesheet" type = "text/css" href = 'https://www.semicolon.dev/static/dark.css' />
+        <script src = 'https://www.semicolon.dev/js/jquery.js' type = 'text/javascript'></script>
+        <script src = 'https://www.semicolon.dev/js/ui.js' type = 'text/javascript'></script>
+        <script src = 'https://www.semicolon.dev/js/hms.js'></script>
+        <script type = "text/javascript">window.website = new Object(); website.url = 'https://' + window.location.hostname; window.VisitTimestamp = Math.floor(Date.now() / 1000);</script>
+        <script type = "module">
+
+            import { API } from "./api/app.js";
+            import { activate_keyboard_shortcuts } from "./js/keyboard.js";
+
+            let darkmode = false;
+
+            const c = document.getElementById("canvas");
+            const ctx = c.getContext("2d");
+            const imglight = document.getElementById("world");
+            const imgdark = document.getElementById("world-dark");
+
+            let img = imglight;
+
+            window.addEventListener("scroll", event => {
+                let body = document.body;
+                let html = document.documentElement;
+                let height = Math.max(body.scrollHeight,
+                    body.offsetHeight,
+                    html.clientHeight,
+                    html.scrollHeight,
+                    html.offsetHeight);
+                document.querySelector("#navigation").style.top = pageYOffset + 64 + 'px';
+            });
+
+            window.addEventListener('DOMContentLoaded', event => {
+
+                window.API = new API();
+
+                activate_keyboard_shortcuts();
+
+                // Setup canvas/world map
+                // ctx.drawImage(img, 0, 0, 920, 468);
+
+                let classLiss = document.querySelector("#settings").classList;
+
+                // Attach mouse over event to cog
+                document.querySelector(".cog").addEventListener("mouseover", E=> {
+                    classLiss.add("preroll");
+                });
+
+                // Attach mouse out event to cog
+                document.querySelector(".cog").addEventListener("mouseout", E=> {
+                    classLiss.remove("preroll");
+                });
+
+                // Attach click event to settings cog button
+                document.querySelector(".cog").addEventListener("click", E => {
+                    let classList = E.target.classList;
+                    // Rotate cog when clicked; toggle side menu block animation
+                    if (classList[1] == "inactive") {
+                        classList.remove("inactive");
+                        classList.add("active");
+                        classLiss.add("active");
+                    } else {
+                        classLiss.remove("active");
+                        classList.remove("active");
+                        classList.add("inactive");
+                    }
+                });
+
+                document.querySelector("#button-dark-mode").addEventListener("click", E => {
+                    ToggleDarkMode();
+                });
+
+                let overlay = document.querySelector("#o");
+                let overlax = document.querySelector("#x");
+                let message = document.querySelector("#m");
+                let messagf = document.querySelector("#n");
+                document.querySelector("#stripe").addEventListener("click", E => {
+                    // animate airplane
+                    console.log("adding animation frame");
+                    let airplane = document.querySelector("#airplane");
+                    airplane.style.animationName = "flown";
+                    // unhide overlay
+                    overlay.style.display = "flex";
+                    // animation-name: flown;document.querySelector("#airplane")
+                    message.innerHTML = window.API.ui.message.post;
+                    setTimeout(E => {
+                        airplane.style.animationName = null;
+                    }, 800);
+                });
+            });
+
+            window.onresize = function(event) {
+                resize(event);
+            }
+
+            let DMT = null;
+            function ToggleDarkMode() {
+                let classLiss = document.querySelector("#icon-darkmode").classList;
+                let classLisa = document.querySelector("#icon-sun").classList;
+                let classLism = document.querySelector("#icon-moon").classList;
+                let settings = document.querySelector("#settings").classList;
+                let cog = document.querySelector(".cog").classList;
+                if (classLisa[0] == "hidden") {
+                    classLisa.remove("hidden");
+                    classLism.add("hidden");
+                    setActiveStyleSheet("light");
+                    document.getElementById("world").setAttribute("src", "https://www.semicolon.dev/static/world.png");
+                    darkmode = false;
+                    img = document.getElementById("world");
+                } else {
+                    classLisa.add("hidden");
+                    classLism.remove("hidden");
+                    setActiveStyleSheet("dark");
+                    document.getElementById("world").setAttribute("src", "https://www.semicolon.dev/static/world-dark.png");
+                    darkmode = true;
+                    img = document.getElementById("world-dark");
+                }
+                if (DMT) {
+                    clearTimeout(DMT);
+                    DMT = null;
+                }
+                DMT = setTimeout(E => {
+                    settings.remove("active");
+                    cog.remove("active");
+                    cog.add("inactive");
+                }, 3000);
+            }
+
+            function setActiveStyleSheet(title) {
+                if (title == null) return;
+                let stylesheets = document.querySelectorAll(`link[rel="alternate stylesheet"]`);
+                stylesheets.forEach(sheet => sheet.disabled = true);
+                let link = `link[title="${title}"]`;
+                // console.log("Switching to link = " + link);
+                let stylesheet = document.querySelector(link);
+                stylesheet.disabled = false;
+                // Store last theme in local storage...
+                // console.log("Setting localStorage item 'theme' to " + title);
+                localStorage.setItem("theme", title);
+            }
+
+            /* function loop() {
+                if (darkmode)
+                    ctx.drawImage(img, 0, 0, 920, 468);
+                else
+                    ctx.drawImage(img, 0, 0, 920, 468);
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop); */
+
+            // Create payload -- redundant everywhere, now in neat make() function
+            let make = function(payload) {
+                return { method: 'post',
+                        headers: { 'Accept': 'application/json' },
+                        body: JSON.stringify(payload) };
+            }
+
+            class User {
+                constructor() { }
+            }
+
+            /* Create user in database
+                payload = {
+                username   : "felix",
+                email      : "felix@thecat.net",
+                first_name : "Felix",
+                last_name  : "Felicis",
+                password   : "Password123",
+                type       : "normal" } */
+            User.register = function(payload) {
+                fetch("/api/email/signup", make(payload))
+                .then(promise => promise.json())
+                .then(json => {
+                    if (json.success) {
+
+                    } else {
+
+                    }
+                });
+            }
+
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            let is_mobile = true; // Mobile first!
+
+            let resize = event => {
+
+                // For transfering signup box from header to sidebar
+                let nav = document.getElementsByTagName("nav")[0];
+                let aside = document.getElementsByTagName("aside")[0];
+                let body = document.getElementsByTagName("body")[0];
+                let graveyard = document.getElementById("graveyard");
+
+                if (event.target.innerWidth < 1000) {
+                    is_mobile = true;
+                } else {
+                    is_mobile = false;
+                }
+
+                let avatar = document.querySelector("#avatar");
+                let bar = document.querySelector("#head section:nth-child(1)");
+                let head = document.querySelector("#head");
+                let follow = document.querySelector("#follow");
+                let breaker = document.querySelector("#breaker");
+                if (event.target.innerWidth < 666) {
+                    let diff = (1.0 - parseInt(666 - event.target.innerWidth) / 1000);
+                    avatar.style.transform = `scale(${diff})`;
+                    avatar.style.left = -50 + parseInt(diff * 50) + "px";
+                    bar.style.height = 87 - (parseInt(event.target.innerWidth) / -5) + "px";
+                } else {}
+            }
+
+            window.onresize = event => resize(event);
+
+        </script>
+
+    </head>
+    <body class = "col" style = 'overflow: auto'>
+
+        <div>
+            <nav class = "row" style = 'position: relative;'>
+                <section><b class = "logo">;</b></section>
+                <section class = "semicolon"><b>semicolon</b></section>
+                <section style = "min-width: 300px; position: relative;">
+                    <input type = "text" name = "search" id = "query" placeholder = "Search"/>
+                    <div class = "magnifying"></div>
+                </section>
+                <section class = "user"><div style = "background: url('https://www.semicolon.dev/static/cat.png'); padding:0;position:absolute;top:8px;left:8px;width: 48px; height:48px"></div></section>
+                <section class = "cog inactive"></section>
+                <article id = "navigation">
+                    <section id = "nc">
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>Home</span></div>
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>Search</span></div>
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>Notifications</span></div>
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>Messages</span></div>
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>Bookmarks</span></div>
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>Lists</span></div>
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>Profile</span></div>
+                        <div id = "opt"><div class = "icon" id = "text"></div><span>More...</span></div>
+                        <section>
+                            <div style = "position: absolute;">
+                                <div class = "no-select" id = "stripe" style = "margin-left:-28px;
+                                            background: black; border-radius: 64px;
+                                            cursor: pointer; position: absolute; top: 0; left:0;
+                                            width: 64px; height: 64px; color: white; text-align: center; border-radius: 64px; line-height: 64px;">
+                                    <div id = "airplane"></div>
+                                </div>
+                            </div>
+                        </section>
+                    </section>
+                </article>
+            </nav>
+            <div id = "settings" class = "inactive noselect">
+                <section><div></div><div>Account</div></section>
+                <section><div></div><div>My Profile</div></section>
+                <section><div></div><div>Settings</div></section>
+                <section id = "button-dark-mode"><div id = "icon-darkmode" class = "hidden">
+                    <div id = "icon-sun" class = ""></div>
+                    <div id = "icon-moon" class = "hidden"></div>
+                </div><div>Dark Mode</div></section>
+                <section class = "rounded-bottom"><div></div><div>Log Out</div></section>
+            </div>
+        </div>
+
+        <main>
+            <section></section>
+            <section id = "B" style = "border-left: 1px solid #eee;">
+
+                <!-- user bio -->
+                <section id="head">
+                    <div id="back"><a href="#" onclick="return null">↫</a></div>
+                    <div style = "margin-left: 64px;">
+                        <h3 id = "yourusername1" style = "margin: 0;">Your Username</h3>
+                        <p style = "margin: 0;">52.3K Tweets</p>
+                    </div>
+                    <section id = "profile">
+                        <section>
+                            <div id="mute">...</div>
+                            <div id="follow">Follow</div>
+                            <div id="avatar">
+                                <img src="https://pbs.twimg.com/profile_images/1247962451779321856/KYuAWBa0_400x400.jpg">
+                            </div>
+                        </section>
+                        <section style = "position: absolute">
+                            <div id="followbar"></div>
+                            <div style="font-size: 18px; font-weight: bold; width: 60%">Your Username</div>
+                            <div style="width: 60%">@your_username</div>
+                            <div style="width: 100%; margin-top: 4px;">United States / link / <div id="breaker" style="display: none;"></div>Joined April 2020</div>
+                            <div style="width: 60%; display: flex; flex-direction: row; justify-content: start; margin-top: 5px;">
+                                <div><b>1,138</b> Following</div>
+                                <div style = "width: 10px;"></div>
+                                <div><b>72.5K</b> Followers</div>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+
+                <!-- bio navigation -->
+                <style>
+                        .opts div section { flex: 1; text-align: center; max-width: 100px; }
+                        .opts div section:hover { border-bottom: 2px solid #333; }
+                    </style>
+                <div class = "opts">
+                    <div class = "row" style = "align-content: stretch; display: flex; flex-direction: row; border-bottom: 1px ddd; cursor: pointer;">
+                        <section style="border-bottom: 2px solid brown">Tweets</section>
+                        <section>Replies</section>
+                        <section>Media</section>
+                        <section>Likes</section>
+                    </div>
+                </div>
+
+                <!-- "tweet" -->
+                <section class = "tweet">
+                    <!-- avatar lane -->
+                    <section class = "avatar-lane">
+                        <a href = "#" onclick = "return false"><img src = "https://pbs.twimg.com/profile_images/1247962451779321856/KYuAWBa0_400x400.jpg" alt = "avatar" /></a>
+                    </section>
+                    <!-- space -->
+                    <section style = "width: 15px;"></section>
+                    <!-- tweet -->
+                    <section class = "col">
+                        <section class = "tweet-user"><b>UserName</b>&nbsp;·&nbsp;<a href = "#" onclick = "return false;">@js_tut</a>&nbsp;·&nbsp;Apr 16</section>
+                        <section class = "tweet-body">Phase 1 – HTML (DOM.)<br/>
+                            Phase 2 – CSS (CSSOM, flex, grid.)<br/>
+                            Phase 3 – JavaScript / front-end.<br/>
+                            Phase 4 – git / linux cli<br/>
+                            Phase 5 – React.<br/>
+                            Phase 6 – Node.<br/>
+                            Phase 7 – Express.<br/>
+                            Phase 8 – Mongo (or MySQL.)<br/>
+                            Phase 9 –  back-end xp @ your 1st job.<br/>
+                            Phase 10 – You're a Full Stack dev.</section>
+                    </section>
+                </section>
+                <section class = "tweet-opts">
+                    <div class = "button-comment">174</div>
+                    <div class = "button-retweet">1.4K</div>
+                    <div class = "button-like">5.4K</div>
+                    <div class = "button-options"></div>
+                    <div class = "button-stats"></div>
+                </section>
+                <!--  Tweet End -->
+
+                <!-- "tweet" -->
+                <section class = "tweet">
+                    <!-- avatar lane -->
+                    <section class = "avatar-lane">
+                        <a href = "#" onclick = "return false"><img src = "https://pbs.twimg.com/profile_images/1247962451779321856/KYuAWBa0_400x400.jpg" alt = "avatar" /></a>
+                    </section>
+                    <!-- space -->
+                    <section style = "width: 15px;"></section>
+                    <!-- tweet -->
+                    <section class = "col">
+                        <section class = "tweet-user"><b>UserName</b>&nbsp;·&nbsp;<a href = "#" onclick = "return false;">@js_tut</a>&nbsp;·&nbsp;Apr 16</section>
+                        <section class = "tweet-body">The back-end parts of Full Stack.<br><br>
+
+                            git<br>
+                            AWS<br>
+                            Python<br>
+                            JavaScript<br>
+                            Micro-services<br>
+                            Node.js (nvm, npm)<br>
+                            Server-side rendering<br>
+                            Continuous Integration<br>
+                            Linux cli/bash (must have!)<br>
+                            certbot, letsencrypt, openssl<br>
+                            MySQL, Mongo, PostgreSQL, GraphQL.<br>
+                            Build own Mailchimp: postfix, spf, dkim, dmarc.<br></section>
+                    </section>
+                </section>
+                <section class = "tweet-opts">
+                    <div class = "button-comment">45</div>
+                    <div class = "button-retweet">368</div>
+                    <div class = "button-like">1.6K</div>
+                    <div class = "button-options"></div>
+                    <div class = "button-stats"></div>
+                </section>
+                <!--  Tweet End -->
+
+                <!-- "tweet" -->
+                <section class = "tweet">
+                    <!-- avatar lane -->
+                    <section class = "avatar-lane">
+                        <a href = "#" onclick = "return false"><img src = "https://pbs.twimg.com/profile_images/1247962451779321856/KYuAWBa0_400x400.jpg" alt = "avatar" /></a>
+                    </section>
+                    <!-- space -->
+                    <section style = "width: 15px;"></section>
+                    <!-- tweet -->
+                    <section class = "col">
+                        <section class = "tweet-user"><b>UserName</b>&nbsp;·&nbsp;<a href = "#" onclick = "return false;">@js_tut</a>&nbsp;·&nbsp;Apr 16</section>
+                        <section class = "tweet-body">Phase 1 – HTML (DOM.)<br/>
+                            Phase 2 – CSS (CSSOM, flex, grid.)<br/>
+                            Phase 3 – JavaScript / front-end.<br/>
+                            Phase 4 – git / linux cli<br/>
+                            Phase 5 – React.<br/>
+                            Phase 6 – Node.<br/>
+                            Phase 7 – Express.<br/>
+                            Phase 8 – Mongo (or MySQL.)<br/>
+                            Phase 9 –  back-end xp @ your 1st job.<br/>
+                            Phase 10 – You're a Full Stack dev.</section>
+                    </section>
+                </section>
+                <section class = "tweet-opts">
+                    <div class = "button-comment">174</div>
+                    <div class = "button-retweet">1.4K</div>
+                    <div class = "button-like">5.4K</div>
+                    <div class = "button-options"></div>
+                    <div class = "button-stats"></div>
+                </section>
+                <!--  Tweet End -->
+                <!-- "tweet" -->
+                <section class = "tweet">
+                    <!-- avatar lane -->
+                    <section class = "avatar-lane">
+                        <a href = "#" onclick = "return false"><img src = "https://pbs.twimg.com/profile_images/1247962451779321856/KYuAWBa0_400x400.jpg" alt = "avatar" /></a>
+                    </section>
+                    <!-- space -->
+                    <section style = "width: 15px;"></section>
+                    <!-- tweet -->
+                    <section class = "col">
+                        <section class = "tweet-user"><b>UserName</b>&nbsp;·&nbsp;<a href = "#" onclick = "return false;">@js_tut</a>&nbsp;·&nbsp;Apr 16</section>
+                        <section class = "tweet-body">Phase 1 – HTML (DOM.)<br/>
+                            Phase 2 – CSS (CSSOM, flex, grid.)<br/>
+                            Phase 3 – JavaScript / front-end.<br/>
+                            Phase 4 – git / linux cli<br/>
+                            Phase 5 – React.<br/>
+                            Phase 6 – Node.<br/>
+                            Phase 7 – Express.<br/>
+                            Phase 8 – Mongo (or MySQL.)<br/>
+                            Phase 9 –  back-end xp @ your 1st job.<br/>
+                            Phase 10 – You're a Full Stack dev.</section>
+                    </section>
+                </section>
+                <section class = "tweet-opts">
+                    <div class = "button-comment">174</div>
+                    <div class = "button-retweet">1.4K</div>
+                    <div class = "button-like">5.4K</div>
+                    <div class = "button-options"></div>
+                    <div class = "button-stats"></div>
+                </section>
+                <!--  Tweet End -->
+
+                <!-- "tweet" -->
+                <section class = "tweet">
+                    <!-- avatar lane -->
+                    <section class = "avatar-lane">
+                        <a href = "#" onclick = "return false"><img src = "https://pbs.twimg.com/profile_images/1247962451779321856/KYuAWBa0_400x400.jpg" alt = "avatar" /></a>
+                    </section>
+                    <!-- space -->
+                    <section style = "width: 15px;"></section>
+                    <!-- tweet -->
+                    <section class = "col">
+                        <section class = "tweet-user"><b>UserName</b>&nbsp;·&nbsp;<a href = "#" onclick = "return false;">@js_tut</a>&nbsp;·&nbsp;Apr 16</section>
+                        <section class = "tweet-body">Phase 1 – HTML (DOM.)<br/>
+                            Phase 2 – CSS (CSSOM, flex, grid.)<br/>
+                            Phase 3 – JavaScript / front-end.<br/>
+                            Phase 4 – git / linux cli<br/>
+                            Phase 5 – React.<br/>
+                            Phase 6 – Node.<br/>
+                            Phase 7 – Express.<br/>
+                            Phase 8 – Mongo (or MySQL.)<br/>
+                            Phase 9 –  back-end xp @ your 1st job.<br/>
+                            Phase 10 – You're a Full Stack dev.</section>
+                    </section>
+                </section>
+                <section class = "tweet-opts">
+                    <div class = "button-comment">174</div>
+                    <div class = "button-retweet">1.4K</div>
+                    <div class = "button-like">5.4K</div>
+                    <div class = "button-options"></div>
+                    <div class = "button-stats"></div>
+                </section>
+                <!--  Tweet End -->
+
+            </section>
+            <section id = "C">
+                <div id = "images">
+                    <section>1</section>
+                    <section>2</section>
+                    <section>3</section>
+                    <section>4</section>
+                    <section>5</section>
+                    <section>6</section>
+                </div>
+                <div id = "mightlike">
+                    <div class="top">You might like</div>
+                    <div class="mid">
+                        <div class="story">1</div>
+                        <div class="story">2</div>
+                        <div class="story">3</div>
+                    </div>
+                    <div class="bot"><span>Show More</span></div>
+                </div>
+                <div id="trends">
+                    <div class="top">Trends for you <span>[ ]</span></div>
+                    <div class="mid">
+                        <div class="story">a</div>
+                        <div class="story">b</div>
+                        <div class="story">c</div>
+                    </div>
+                    <div class="bot"><span>Show More</span></div>
+                </div>
+            </section>
+        </main>
+        <footer><!--&copy; 2020 semicolon.dev--></footer>
+        <!-- overlay for modal UI -->
+        <i id = "o"><i id = "m"></i></i>
+        <i id = "x"><i id = "n"></i></i>
+    </body>
+</html>
